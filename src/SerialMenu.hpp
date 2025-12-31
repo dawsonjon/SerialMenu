@@ -1,7 +1,9 @@
+#include "Arduino.h"
+
 #if SERIALMENU_DISABLE_PROGMEM_SUPPORT != true
-constexpr PROGMEM char SERIAL_MENU_COPYRIGHT[] = 
+constexpr PROGMEM char SERIAL_MENU_COPYRIGHT[] =
 #else
-constexpr char SERIAL_MENU_COPYRIGHT[] = 
+constexpr char SERIAL_MENU_COPYRIGHT[] =
 #endif
 ///////////////////////////////////////////////////////////////////////////////
 // SerialMenu - An Efficient Menu Library for Arduino Serial Console
@@ -54,7 +56,7 @@ constexpr char SERIAL_MENU_COPYRIGHT[] =
 // //// You can declare some menu strings separately (needed for FLASH) ////
 // const char menu1String1[] = "Y - residplay this menu (Text in SRAM)";
 // const char menu1String2[] PROGMEM = "Z - second menu (Text in FLASH)";
-// 
+//
 // //// Definition of menu1: ///
 // //// Text is either embedded direct or a string name is referenced ////
 // //// Text in FLASH via PROGMEM is flagged as true ////
@@ -186,7 +188,7 @@ class SerialMenuEntry {
     // Keyboard character entry to select this menu entry, overloaded:
     // We set bit 0x20 to 0 for normal message, to 1 for a PROGMEM message
     const char key;
-    
+
   public:
     // Constructor used to init the array of menu entries
     SerialMenuEntry(const char * m, bool isprogMem, char k, void (*c)()) :
@@ -198,7 +200,7 @@ class SerialMenuEntry {
       //#endif
       actionCallback(c)
     {}
-  
+
     // Get the menu message to display
     inline const char * getMenu() const
     {
@@ -275,25 +277,25 @@ class SerialMenu
     // Initializes with an empty menu, prepares serial console and staus LED.
     SerialMenu()
     {
-      Serial.begin(9600);
-      while (!Serial){};
+      //Serial.begin(9600);
+      //while (!Serial){};
 
-      #if SERIALMENU_MINIMAL_FOOTPRINT != true
-        #if SERIALMENU_DISABLE_PROGMEM_SUPPORT != true
-          char buffer[sizeof(SERIAL_MENU_COPYRIGHT)];
-          strlcpy_P(buffer, SERIAL_MENU_COPYRIGHT, sizeof(SERIAL_MENU_COPYRIGHT));
-          Serial.println(buffer);
-        #else
-          Serial.println(SERIAL_MENU_COPYRIGHT);
-        #endif
-      #endif
+      //#if SERIALMENU_MINIMAL_FOOTPRINT != true
+      //  #if SERIALMENU_DISABLE_PROGMEM_SUPPORT != true
+      //    char buffer[sizeof(SERIAL_MENU_COPYRIGHT)];
+      //    strlcpy_P(buffer, SERIAL_MENU_COPYRIGHT, sizeof(SERIAL_MENU_COPYRIGHT));
+      //    Serial.println(buffer);
+      //  #else
+      //    Serial.println(SERIAL_MENU_COPYRIGHT);
+      //  #endif
+      //#endif
 
       // Prepare to blink built-in LED.
-      #ifdef SERIALMENU_SHOW_HEARTBEAT_ON_IDLE
-      {
-        pinMode(LED_BUILTIN, OUTPUT);
-      }
-      #endif
+      //#ifdef SERIALMENU_SHOW_HEARTBEAT_ON_IDLE
+      //{
+      //  pinMode(LED_BUILTIN, OUTPUT);
+      //}
+      //#endif
     }
 
   public:
@@ -309,13 +311,13 @@ class SerialMenu
 
     // Get a pointer to the one singleton instance of this class and point it
     // to the current menu
-    static const SerialMenu & get(const SerialMenuEntry* array, uint8_t arraySize)
+    static SerialMenu & get(const SerialMenuEntry* array, uint8_t arraySize)
     {
       (void) SerialMenu::get();
       singleton->load(array, arraySize);
       return *singleton;
     }
-    
+
     // Install the current menu to display
     inline void load(const SerialMenuEntry* array, uint8_t arraySize)
     {
@@ -375,13 +377,13 @@ class SerialMenu
       T value = 0;
       bool isNegative = false;
       T decimals = 0;
-      
+
       if (message)
       {
         Serial.print(message);
       }
       char c = '0';
-      
+
       // Skip the first invalid carriage return
       while (!Serial.available());
       c = Serial.read();
@@ -397,7 +399,7 @@ class SerialMenu
         while (!Serial.available());
         c = Serial.read();
       }
-      
+
       while ((c >= '0' and c <= '9') || c == '.')
       {
         decimals *= 10;
@@ -414,17 +416,17 @@ class SerialMenu
         while (!Serial.available());
         c = Serial.read();
       }
-      
+
       if (isNegative)
       {
         value = -value;
       }
-      
+
       if (decimals)
       {
         value /= decimals;
       }
-      
+
       if (message)
       {
         Serial.println(value);
@@ -485,13 +487,13 @@ class SerialMenu
       {
         // Read one character from the Serial console as a menu choice.
         char menuChoice = Serial.read();
-        
+
         // Carriage return is not a menu choice
         if (menuChoice == 0x0A)
         {
           return false;
         }
-       
+
         uint8_t i;
         for (i = 0; i < size; ++i)
         {

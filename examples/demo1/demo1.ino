@@ -24,7 +24,7 @@
 #define DEMOCOPYRIGHT "SerialMenu demo1 - Copyright (c) 2019 Dan Truong"
 
 #include <SerialMenu.hpp>
-const SerialMenu& menu = SerialMenu::get();
+SerialMenu& menu = SerialMenu::get();
 
 // Declare some global variables
 float f = 0;
